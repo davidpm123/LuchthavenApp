@@ -1,0 +1,20 @@
+public class Passagier {
+    String naam;
+    int leeftijd;
+    String adres;
+    double bagageGewicht;
+
+    public Passagier(String naam, int leeftijd, String adres, double bagageGewicht) {
+        this.naam = naam;
+        this.leeftijd = leeftijd;
+        this.adres = adres;
+        this.bagageGewicht = bagageGewicht;
+    }
+
+    public void printDetails() {
+        System.out.println("Naam: " + naam);
+        System.out.println("Leeftijd: " + leeftijd);
+        System.out.println("Adres: " + adres);
+        System.out.println("Bagagegewicht: " + bagageGewicht + " kg");
+    }
+}
