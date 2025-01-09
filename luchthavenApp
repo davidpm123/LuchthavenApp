@@ -1,0 +1,199 @@
+import java.util.Scanner;
+import java.util.ArrayList;
+
+public class LuchthavenApp {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Vlucht vlucht = null;
+        ArrayList<Vlucht> vluchten = new ArrayList<>();
+
+        while (true) {
+
+            System.out.println("\nKies een optie:");
+            System.out.println("1. Nieuwe passagier aanmaken");
+            System.out.println("2. Nieuwe vlucht aanmaken");
+            System.out.println("3. Passagier toevoegen aan vlucht");
+            System.out.println("4. Personeel toevoegen aan vlucht");
+            System.out.println("5. Vluchtinformatie bekijken");
+            System.out.println("6. Piloot toevoegen aan vlucht");
+            System.out.println("7. Flightcheck uitvoeren door piloot");
+            System.out.println("8. Afsluiten");
+
+            int keuze = scanner.nextInt();
+            scanner.nextLine();
+
+            if (keuze == 1) {
+                System.out.print("Voer naam in: ");
+                String naam = scanner.nextLine();
+                int leeftijd = -1;
+                while (leeftijd <= 0) {
+                    System.out.print("Voer leeftijd in (positief geheel getal): ");
+                    if (scanner.hasNextInt()) {
+                        leeftijd = scanner.nextInt();
+                        scanner.nextLine();
+                        if (leeftijd <= 0) {
+                            System.out.println("De leeftijd moet positief zijn. Probeer opnieuw.");
+                        }
+                    } else {
+                        System.out.println("Ongeldige invoer. Voer een geheel getal in.");
+                        scanner.next();
+                    }
+                }
+                double bagageGewicht = -1;
+                while (bagageGewicht < 0 || bagageGewicht > 30) {
+                    System.out.print("Voer bagagegewicht in (maximaal 30 kg): ");
+                    if (scanner.hasNextDouble()) {
+                        bagageGewicht = scanner.nextDouble();
+                        scanner.nextLine();
+                        if (bagageGewicht < 0) {
+                            System.out.println("Bagagegewicht moet positief zijn. Probeer opnieuw.");
+                        } else if (bagageGewicht > 30) {
+                            System.out.println("Bagage is te zwaar. Probeer opnieuw.");
+                        }
+                    } else {
+                        System.out.println("Ongeldige invoer. Voer een geldig gewicht in.");
+                        scanner.next();
+                    }
+                }
+                System.out.print("Voer adres in: ");
+                String adres = scanner.nextLine();
+
+                Passagier passagier = new Passagier(naam, leeftijd, adres, bagageGewicht);
+                System.out.println("\nPassagier aangemaakt:");
+                passagier.printDetails();
+
+            } else if (keuze == 2) {
+                System.out.println("Voer vluchtcode in:");
+                String vluchtCode = scanner.nextLine();
+                System.out.println("Voer bestemming in:");
+                String bestemming = scanner.nextLine();
+                int economyStoelen = -1;
+                while (economyStoelen <= 0) {
+                    System.out.print("Voer economy stoelen in (positief geheel getal): ");
+                    if (scanner.hasNextInt()) {
+                        economyStoelen = scanner.nextInt();
+                        scanner.nextLine();
+                        if (economyStoelen <= 0) {
+                            System.out.println("De economy stoelen moet positief zijn. Probeer opnieuw.");
+                        }
+                    } else {
+                        System.out.println("Ongeldige invoer. Voer een geheel getal in.");
+                        scanner.next();
+                    }
+                }
+                int businessStoelen = -1;
+                while (businessStoelen <= 0) {
+                    System.out.print("Voer business stoelen in (positief geheel getal): ");
+                    if (scanner.hasNextInt()) {
+                        businessStoelen = scanner.nextInt();
+                        scanner.nextLine();
+                        if (businessStoelen <= 0) {
+                            System.out.println("De business stoelen moet positief zijn. Probeer opnieuw.");
+                        }
+                    } else {
+                        System.out.println("Ongeldige invoer. Voer een geheel getal in.");
+                        scanner.next();
+                    }
+                }
+                scanner.nextLine();
+
+                 vlucht = new Vlucht(vluchtCode, bestemming, economyStoelen, businessStoelen);
+                vluchten.add(vlucht);
+                System.out.println("Vlucht aangemaakt.");
+
+            } else if (keuze == 3) {
+                if (vluchten.isEmpty()) {
+                    System.out.println("Er zijn geen vluchten beschikbaar. Maak eerst een vlucht aan.");
+                    continue;
+                }
+                System.out.println("Voer vluchtcode in:");
+                String vluchtCode = scanner.nextLine();
+                Vlucht geselecteerdeVlucht = null;
+
+                for (Vlucht v : vluchten) {
+                    if (v.getVluchtCode().equals(vluchtCode)) {
+                        geselecteerdeVlucht = v;
+                        break;
+                    }
+                }
+
+                if (geselecteerdeVlucht == null) {
+                    System.out.println("Vlucht met code " + vluchtCode + " niet gevonden.");
+                    continue;
+                }
+
+                System.out.println("Voer passagiersnaam in:");
+                String naam = scanner.nextLine();
+                System.out.println("Voer klasse in (economy/business):");
+                String klasse = scanner.nextLine();
+
+                Passagier passagier = new Passagier(naam, 30, "Onbekend", 10.0);
+                geselecteerdeVlucht.voegPassagierToe(passagier, klasse);
+                System.out.println("Passagier toegevoegd aan vlucht " + vluchtCode + ".");
+
+            } else if (keuze == 4) {
+                if (vlucht == null) {
+                    System.out.println("Maak eerst een vlucht aan!");
+                    continue;
+                }
+                System.out.println("Voer personeelsnaam in:");
+                String naam = scanner.nextLine();
+                System.out.println("Voer functie in (hoofd steward/steward):");
+                String functie = scanner.nextLine();
+
+                Personeel personeel = new Personeel(naam, functie);
+                vlucht.voegPersoneelToe(personeel);
+
+            } else if (keuze == 5) {
+                if (vlucht == null) {
+                    System.out.println("Maak eerst een vlucht aan!");
+                } else {
+                    vlucht.printVluchtDetails();
+                }
+
+            } else if (keuze == 6) {
+                if (vlucht == null) {
+                    System.out.println("Maak eerst een vlucht aan!");
+                    continue;
+                }
+                System.out.println("Voer naam van de piloot in:");
+                String naam = scanner.nextLine();
+
+                Piloot piloot = new Piloot(naam);
+                vlucht.voegPersoneelToe(piloot);
+                System.out.println("Piloot toegevoegd.");
+
+
+
+            } else if (keuze == 7) {
+                if (vlucht == null) {
+                    System.out.println("Maak eerst een vlucht aan!");
+                    continue;
+                }
+                boolean flightcheckUitgevoerd = false;
+                for (Personeel p : vlucht.getPersoneel()) {
+                    if (p instanceof Piloot) {
+                        Piloot piloot;
+                        piloot = (Piloot) p;
+                        piloot.voerFlightCheckUit();
+                        flightcheckUitgevoerd = true;
+                        break;
+                    }
+                }
+                if (!flightcheckUitgevoerd) {
+                    System.out.println("Er is geen piloot aanwezig om de controle uit te voeren.");
+                }
+
+
+            } else if (keuze == 8) {
+                System.out.println("Applicatie afgesloten.");
+                break;
+
+
+            } else {
+                System.out.println("Ongeldige keuze. Probeer opnieuw.");
+            }
+        }
+        scanner.close();
+    }
+}
