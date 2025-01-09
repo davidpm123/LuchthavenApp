@@ -1,0 +1,103 @@
+import java.util.ArrayList;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class Vlucht {
+    String vluchtCode;
+    String bestemming;
+    int economyStoelen;
+    int businessStoelen;
+    ArrayList<Passagier> passagiers = new ArrayList<>();
+    ArrayList<Personeel> personeel = new ArrayList<>();
+
+    public Vlucht(String vluchtCode, String bestemming, int economyStoelen, int businessStoelen) {
+        this.vluchtCode = vluchtCode;
+        this.bestemming = bestemming;
+        this.economyStoelen = economyStoelen;
+        this.businessStoelen = businessStoelen;
+    }
+
+    public String getVluchtCode() {
+        return vluchtCode;
+    }
+
+    public void voegPassagierToe(Passagier passagier, String klasse) {
+        if (passagier.naam == null || passagier.naam.trim().isEmpty()) {
+            System.out.println("Passagiersnaam mag niet leeg zijn.");
+            return;
+        }
+
+        if (klasse.equalsIgnoreCase("economy")) {
+            if (economyStoelen > 0) {
+                economyStoelen--;
+                passagiers.add(passagier);
+                System.out.println("Passagier toegevoegd aan economy.");
+            } else {
+                System.out.println("Geen plaatsen beschikbaar in economy.");
+            }
+        } else if (klasse.equalsIgnoreCase("business")) {
+            if (businessStoelen > 0) {
+                businessStoelen--;
+                passagiers.add(passagier);
+                System.out.println("Passagier toegevoegd aan business.");
+            } else {
+                System.out.println("Geen plaatsen beschikbaar in business.");
+            }
+        } else {
+            System.out.println("Ongeldige klasse. Kies 'economy' of 'business'.");
+        }
+    }
+
+    public void voegPersoneelToe(Personeel personeelLid) {
+        personeel.add(personeelLid);
+        System.out.println("Personeelslid toegevoegd.");
+    }
+
+    public void printVluchtDetails() {
+        try (FileWriter writer = new FileWriter(vluchtCode + "_details.txt")) {
+            schrijfVluchtDetails(writer);
+            System.out.println("Vluchtinformatie opgeslagen in " + vluchtCode + "_details.txt");
+        } catch (IOException e) {
+            System.out.println("Er is een fout opgetreden bij het opslaan van de vluchtinformatie: " + e.getMessage());
+        }
+    }
+
+    private void schrijfVluchtDetails(Appendable writer) throws IOException {
+        writer.append("Vluchtcode: ").append(vluchtCode).append("\n");
+        writer.append("Bestemming: ").append(bestemming).append("\n");
+        writer.append("Stoelen over - Economy: ").append(String.valueOf(economyStoelen)).append(", Business: ").append(String.valueOf(businessStoelen)).append("\n");
+        writer.append("Passagiers:\n");
+        for (Passagier p : passagiers) {
+            writer.append("- ").append(p.naam).append("\n");
+        }
+        writer.append("Personeel:\n");
+        for (Personeel p : personeel) {
+            writer.append("- ").append(p.naam).append(" (").append(p.functie).append(")\n");
+        }
+    }
+
+    public boolean kanOpstijgen() {
+        boolean pilootAanwezig = false;
+        boolean flightCheckInOrde = false;
+
+        for (Personeel p : personeel) {
+            if (p instanceof Piloot piloot) {
+                pilootAanwezig = true;
+                flightCheckInOrde = piloot.isFlightCheckUitgevoerd();
+                break;
+            }
+        }
+
+        if (pilootAanwezig && flightCheckInOrde) {
+            System.out.println("Vlucht kan opstijgen!");
+            return true;
+        } else {
+            System.out.println("Vlucht kan niet opstijgen. Controleer of er een piloot is en of de flightcheck is uitgevoerd.");
+            return false;
+        }
+    }
+
+    public Personeel[] getPersoneel() {
+        return personeel.toArray(new Personeel[0]);
+    }
+}
